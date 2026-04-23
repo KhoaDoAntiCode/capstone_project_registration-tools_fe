@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react"; 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,10 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, Lock, Loader2 } from "lucide-react";
 
-import api from "@/lib/api";
-
 import LoginAlert from "./LoginAlert";
-// import { decodeJWT, updateCurrentUser } from "@/lib/utils/auth";
+import { decodeJWT, updateCurrentUser } from "@/lib/utils/auth";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -21,28 +19,53 @@ export default function LoginForm() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async () => {
-    const res = await api.post("/auth/login", {
-      email,
-      password,
+const handleLogin = async (e: any) => {
+  e.preventDefault();
+  setError("");
+  setLoading(true);
+
+  try {
+    const res = await fetch("https://localhost:7148/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
     });
 
-    console.log("LOGIN RES:", res.data);
+    const json = await res.json();
 
-    const token =
-      res.data?.accessToken ||
-      res.data?.token ||
-      res.data?.data?.accessToken;
-
-    if (!token) {
-      alert("Không có token từ API");
-      return;
+    // ❌ nếu fail
+    if (!res.ok || !json.success) {
+      throw new Error(json.message || "Đăng nhập thất bại");
     }
 
-    localStorage.setItem("accessToken", token);
-    router.push("/dashboard");
-  };
+    // ✅ data chuẩn từ API
+    const user = json.data;
 
+    // ✅ lưu 1 lần duy nhất
+    localStorage.setItem("token", user.token);
+    localStorage.setItem("user", JSON.stringify(user));
+
+    // ✅ update context (nếu có)
+    updateCurrentUser({
+      userId: user.userId,
+      username: user.email,
+      fullName: user.fullName,
+      email: user.email,
+      role: user.role,
+      groupId: null,
+    });
+
+    // ✅ redirect
+    router.push(`/dashboard`);
+
+  } catch (err: any) {
+    setError(err.message || "Lỗi đăng nhập");
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <>
       <CardContent className="space-y-6">

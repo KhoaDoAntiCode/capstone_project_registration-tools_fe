@@ -17,3 +17,5 @@ export default function CreateProjectPage() {
     </div>
   );
 }
+
+// project/create/page
