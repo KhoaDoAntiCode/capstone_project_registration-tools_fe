@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState } from "react"; 
 import { useRouter } from "next/navigation";
 import { CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,8 +8,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, Lock, Loader2 } from "lucide-react";
 
+import api from "@/lib/api";
+
 import LoginAlert from "./LoginAlert";
-import { decodeJWT, updateCurrentUser } from "@/lib/utils/auth";
+// import { decodeJWT, updateCurrentUser } from "@/lib/utils/auth";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -19,46 +21,26 @@ export default function LoginForm() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e: any) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+  const handleLogin = async () => {
+    const res = await api.post("/auth/login", {
+      email,
+      password,
+    });
 
-    try {
-      const response = await fetch("https://localhost:7148/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+    console.log("LOGIN RES:", res.data);
 
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Đăng nhập thất bại");
+    const token =
+      res.data?.accessToken ||
+      res.data?.token ||
+      res.data?.data?.accessToken;
 
-      const token = data.token;
-      const user = data.user;
-
-      localStorage.setItem("token", token);
-
-      updateCurrentUser({
-        userId: user.id || user.userId,
-        username: user.username || email,
-        fullName:
-          (user.userProfile?.fullName && user.userProfile.fullName.trim()) ||
-          (user.fullName && user.fullName.trim()) ||
-          (user.username && user.username.trim()) ||
-          (user.email && user.email.trim()) ||
-          email,
-        email: user.email || email,
-        role: user.role,
-        groupId: user.groupId || null,
-      });
-
-      router.push(`/${user.role}/dashboard`); 
-    } catch (err: any) {
-      setError(err.message || "Lỗi đăng nhập");
-    } finally {
-      setLoading(false);
+    if (!token) {
+      alert("Không có token từ API");
+      return;
     }
+
+    localStorage.setItem("accessToken", token);
+    router.push("/dashboard");
   };
 
   return (
