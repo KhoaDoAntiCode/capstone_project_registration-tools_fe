@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import {
@@ -621,65 +622,65 @@ function TopicInfoSection({ topic, setTopic, highlight }: {
 
 // ─── Similarity Section ───────────────────────────────────────────────────────
 
-function SimilaritySection() {
-  const [file, setFile] = useState<File | null>(null);
-  const [checking, setChecking] = useState(false);
-  const [result, setResult] = useState<{ score: number; status: "pass" | "fail" } | null>(null);
+// function SimilaritySection() {
+//   const [file, setFile] = useState<File | null>(null);
+//   const [checking, setChecking] = useState(false);
+//   const [result, setResult] = useState<{ score: number; status: "pass" | "fail" } | null>(null);
 
-  const handleCheck = () => {
-    if (!file) return;
-    setChecking(true);
-    setTimeout(() => {
-      const score = Math.floor(Math.random() * 40);
-      setResult({ score, status: score <= 30 ? "pass" : "fail" });
-      setChecking(false);
-    }, 2000);
-  };
+//   const handleCheck = () => {
+//     if (!file) return;
+//     setChecking(true);
+//     setTimeout(() => {
+//       const score = Math.floor(Math.random() * 40);
+//       setResult({ score, status: score <= 30 ? "pass" : "fail" });
+//       setChecking(false);
+//     }, 2000);
+//   };
 
-  return (
-    <SectionCard icon={<Search size={16} />} title="Kiểm tra độ tương đồng" colorClass="bg-purple-500" defaultOpen={false}>
-      <div className="space-y-4 mt-2">
-        <p className="text-sm text-gray-500">Tải lên file đề cương (PDF/DOCX) để kiểm tra độ tương đồng. Tỷ lệ cho phép ≤ <strong>30%</strong>.</p>
-        <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:border-purple-300 transition-colors">
-          <input type="file" id="sim-file" accept=".pdf,.docx" onChange={(e) => { setFile(e.target.files?.[0] || null); setResult(null); }} className="hidden" />
-          <label htmlFor="sim-file" className="cursor-pointer flex flex-col items-center gap-2">
-            <Upload size={28} className="text-gray-300" />
-            {file ? <p className="text-sm font-medium text-purple-600">{file.name}</p> : (
-              <><p className="text-sm text-gray-500">Kéo thả hoặc <span className="text-purple-600 font-medium underline">chọn file</span></p><p className="text-xs text-gray-400">PDF, DOCX (tối đa 10MB)</p></>
-            )}
-          </label>
-        </div>
-        {file && (
-          <Button onClick={handleCheck} disabled={checking} className="bg-purple-600 hover:bg-purple-700 text-white w-full">
-            {checking
-              ? <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />Đang kiểm tra...</>
-              : <><Search size={15} className="mr-2" />Kiểm tra độ tương đồng</>
-            }
-          </Button>
-        )}
-        {result && (
-          <div className={cn("rounded-xl p-4 flex items-center gap-4", result.status === "pass" ? "bg-green-50 border border-green-200" : "bg-red-50 border border-red-200")}>
-            {result.status === "pass"
-              ? <CheckCircle2 size={28} className="text-green-500 shrink-0" />
-              : <AlertCircle size={28} className="text-red-500 shrink-0" />
-            }
-            <div>
-              <p className={cn("font-semibold", result.status === "pass" ? "text-green-700" : "text-red-700")}>
-                Độ tương đồng: {result.score}%{" "}
-                <Badge className={result.status === "pass" ? "bg-green-100 text-green-700 ml-1 border-0" : "bg-red-100 text-red-700 ml-1 border-0"}>
-                  {result.status === "pass" ? "Đạt yêu cầu" : "Vượt ngưỡng"}
-                </Badge>
-              </p>
-              <p className="text-sm text-gray-500 mt-0.5">
-                {result.status === "pass" ? "Đề tài đáp ứng yêu cầu về độ tương đồng." : "Vượt ngưỡng 30%. Vui lòng chỉnh sửa trước khi nộp."}
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
-    </SectionCard>
-  );
-}
+//   return (
+//     <SectionCard icon={<Search size={16} />} title="Kiểm tra độ tương đồng" colorClass="bg-purple-500" defaultOpen={false}>
+//       <div className="space-y-4 mt-2">
+//         <p className="text-sm text-gray-500">Tải lên file đề cương (PDF/DOCX) để kiểm tra độ tương đồng. Tỷ lệ cho phép ≤ <strong>30%</strong>.</p>
+//         <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:border-purple-300 transition-colors">
+//           <input type="file" id="sim-file" accept=".pdf,.docx" onChange={(e) => { setFile(e.target.files?.[0] || null); setResult(null); }} className="hidden" />
+//           <label htmlFor="sim-file" className="cursor-pointer flex flex-col items-center gap-2">
+//             <Upload size={28} className="text-gray-300" />
+//             {file ? <p className="text-sm font-medium text-purple-600">{file.name}</p> : (
+//               <><p className="text-sm text-gray-500">Kéo thả hoặc <span className="text-purple-600 font-medium underline">chọn file</span></p><p className="text-xs text-gray-400">PDF, DOCX (tối đa 10MB)</p></>
+//             )}
+//           </label>
+//         </div>
+//         {file && (
+//           <Button onClick={handleCheck} disabled={checking} className="bg-purple-600 hover:bg-purple-700 text-white w-full">
+//             {checking
+//               ? <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />Đang kiểm tra...</>
+//               : <><Search size={15} className="mr-2" />Kiểm tra độ tương đồng</>
+//             }
+//           </Button>
+//         )}
+//         {result && (
+//           <div className={cn("rounded-xl p-4 flex items-center gap-4", result.status === "pass" ? "bg-green-50 border border-green-200" : "bg-red-50 border border-red-200")}>
+//             {result.status === "pass"
+//               ? <CheckCircle2 size={28} className="text-green-500 shrink-0" />
+//               : <AlertCircle size={28} className="text-red-500 shrink-0" />
+//             }
+//             <div>
+//               <p className={cn("font-semibold", result.status === "pass" ? "text-green-700" : "text-red-700")}>
+//                 Độ tương đồng: {result.score}%{" "}
+//                 <Badge className={result.status === "pass" ? "bg-green-100 text-green-700 ml-1 border-0" : "bg-red-100 text-red-700 ml-1 border-0"}>
+//                   {result.status === "pass" ? "Đạt yêu cầu" : "Vượt ngưỡng"}
+//                 </Badge>
+//               </p>
+//               <p className="text-sm text-gray-500 mt-0.5">
+//                 {result.status === "pass" ? "Đề tài đáp ứng yêu cầu về độ tương đồng." : "Vượt ngưỡng 30%. Vui lòng chỉnh sửa trước khi nộp."}
+//               </p>
+//             </div>
+//           </div>
+//         )}
+//       </div>
+//     </SectionCard>
+//   );
+// }
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
@@ -715,7 +716,14 @@ export default function CreateCapstonePage() {
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await fetch("https://localhost:7148/api/projects/parse", {
+    // const res = await fetch("https://localhost:7148/api/projects/parse", {
+    //   method: "POST",
+    //   headers: {
+    //     Authorization: `Bearer ${token}`,
+    //   },
+    //   body: formData,
+    // });
+    const res = await fetch("https://capstoneprojecttopicapproval-production.up.railway.app/api/projects/parse", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -748,6 +756,7 @@ export default function CreateCapstonePage() {
     setSubmitted(false);
   };
 
+  const router = useRouter();
   const handleSubmit = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -803,7 +812,7 @@ export default function CreateCapstonePage() {
         })),
       };
 
-      const res = await fetch("https://localhost:7148/api/projects", {
+const res = await fetch("https://capstoneprojecttopicapproval-production.up.railway.app/api/projects", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -818,6 +827,11 @@ export default function CreateCapstonePage() {
       }
 
       setSubmitted(true);
+
+          // 👉 Delay nhẹ cho UX đẹp
+    setTimeout(() => {
+      router.push("/projects"); // chuyển sang list
+    }, 1200);
     } catch (err) {
       console.error(err);
       alert("Submit thất bại");
@@ -915,7 +929,7 @@ export default function CreateCapstonePage() {
             <SupervisorSection supervisors={supervisors} setSupervisors={setSupervisors} highlight={imported} />
             <StudentSection students={students} setStudents={setStudents} highlight={imported} />
             <TopicInfoSection topic={topic} setTopic={setTopic} highlight={imported} />
-            <SimilaritySection />
+            {/* <SimilaritySection /> */}
           </div>
 
           {/* Submit */}
