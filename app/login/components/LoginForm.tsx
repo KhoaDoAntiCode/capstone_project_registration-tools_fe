@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Mail, Lock, Loader2 } from "lucide-react";
 
 import LoginAlert from "./LoginAlert";
-import { decodeJWT, updateCurrentUser } from "@/lib/utils/auth";
+// import { decodeJWT, updateCurrentUser } from "@/lib/utils/auth";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -25,13 +25,16 @@ const handleLogin = async (e: any) => {
   setLoading(true);
 
   try {
-    const res = await fetch("https://localhost:7148/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
+const res = await fetch(
+  "https://capstoneprojecttopicapproval-production.up.railway.app/api/auth/login",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, password }),
+  }
+);
 
     const json = await res.json();
 
@@ -48,14 +51,14 @@ const handleLogin = async (e: any) => {
     localStorage.setItem("user", JSON.stringify(user));
 
     // ✅ update context (nếu có)
-    updateCurrentUser({
-      userId: user.userId,
-      username: user.email,
-      fullName: user.fullName,
-      email: user.email,
-      role: user.role,
-      groupId: null,
-    });
+    // updateCurrentUser({
+    //   userId: user.userId,
+    //   username: user.email,
+    //   fullName: user.fullName,
+    //   email: user.email,
+    //   role: user.role,
+    //   groupId: null,
+    // });
 
     // ✅ redirect
     router.push(`/dashboard`);
