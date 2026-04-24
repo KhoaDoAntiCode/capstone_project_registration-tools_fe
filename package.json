@@ -13,13 +13,16 @@
     "axios": "^1.15.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "embla-carousel-react": "^8.6.0",
     "lucide-react": "^1.8.0",
     "next": "16.2.4",
     "next-themes": "^0.4.6",
     "radix-ui": "^1.4.3",
     "react": "19.2.4",
+    "react-day-picker": "^9.14.0",
     "react-dom": "19.2.4",
     "react-hook-form": "^7.73.1",
+    "recharts": "^3.8.1",
     "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
